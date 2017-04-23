@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fast Food</title>
+	<meta charset="utf-8">
+	<!-- Latest compiled and minified CSS & JS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script src="js/jquery.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script src="js/angular-sanitize.js"></script>
+	<script src="js/angular-google-maps-geocoder.js"></script>
+</head>
+<body ng-app="restaurantMgmt" ng-controller="Ctrl" ng-init="listRestaurants()">
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">Fast Food</a>
+			<ul class="nav navbar-nav">
+				<li class="active">
+					<a href="#" id="list" ng-click="listRestaurants()">List</a>
+				</li>
+				<li>
+					<a href="#" id="add">Add</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container-fluid">
+		<div class="row" >
+			<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+				<div class="row">
+
+					<h1>List of restaurants</h1>
+					<!-- <a href="#" ng-click="listRestaurants()">List</a> -->
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr> <!-- ng repeat + onlcick load map based on lat/long-->
+								<th>Name</th>
+								<th>Address</th>
+								<th>Drive</th>
+								<th>Phone</th>
+								<th style="text-align: center;">Function</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="restaurant in restaurants" > <!-- ng-click="getMap({{restaurant.name}})"-->
+								<td><a href="" ng-click="getMap(restaurant.id)">{{restaurant.name}}</a></td>
+								<td>{{restaurant.address}}</td>
+								<td><span class="glyphicon glyphicon-{{restaurant.drive ? 'ok' : 'minus'}}" aria-hidden="true"></span> </td>
+								<td>{{restaurant.phone}}</td>
+								<td style="text-align: center;"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+				<div class="row">
+
+					<form id="addRestaurantForm" class="form-horizontal hidden" role="form">
+						<legend>Add new Restaurant</legend>
+
+						<div class="input-group">
+							<span class="input-group-addon" id="sizing-addon1">Name</span>
+							<input type="text" class="form-control"  name="name" placeholder="Name" aria-describedby="sizing-addon1">
+						</div>
+						<div class="input-group">
+							<span class="input-group-addon" id="sizing-addon2">ZIP</span>
+							<input type="text" class="form-control" name="zip" placeholder="1062" aria-describedby="sizing-addon2">
+							<span class="input-group-addon" id="sizing-addon3">City</span>
+							<input type="text" class="form-control" name="city" placeholder="Budapest" aria-describedby="sizing-addon3">
+							<span class="input-group-addon" id="sizing-addon4">Street</span>
+							<input type="text" class="form-control" name="street" placeholder="Váci út" aria-describedby="sizing-addon4">
+							<span class="input-group-addon" id="sizing-addon5">Number</span>
+							<input type="text" class="form-control" name="number" placeholder="1-3." aria-describedby="sizing-addon5">
+						</div>
+						<div class="input-group">	
+							<span class="input-group-addon" id="sizing-addon6">Drive</span>
+							<input type="checkbox" class="form-control" name="drive" aria-describedby="sizing-addon6">
+						</div>
+						<div class="input-group">
+							<span class="input-group-addon" id="sizing-addon7">Phone</span>
+							<input type="text" class="form-control" name="phone" placeholder="+3614005000" aria-describedby="sizing-addon7">
+						</div>
+						<button type="submit" class="btn btn-primary" ng-click="sendForm()">Submit</button>
+					</form>
+
+				</div>
+			</div>
+			
+			<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+				<div ng-app="restaurantMgmt" ng-controller="Ctrl">
+					<div ng-bind-html="map"></div> 
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+    		$("#add").click(function(){
+        	$("form").removeClass("hidden");
+    	});
+         	$("#list").click(function(){
+        	$("form").addClass("hidden");
+       	});
+	});
+
+		var restaurantMgmtModule = angular.module("restaurantMgmt", ['ngSanitize'])
+		restaurantMgmtModule.controller("Ctrl", function($scope, $http) {
+			$scope.listRestaurants = function() {
+				$http.get("/getRestaurants").then(function(resp) {
+					$scope.restaurants = resp.data;
+				})
+
+			}
+			$scope.getMap = function(rest) {
+				$http.get("/getRestaurants/"+rest).then(function(resp) {
+					$scope.rest = resp.data[0].address.split(" ").join("+");
+					$scope.map = '<iframe id="map" width="100%" height="400" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCOum7rLqWUpazwTQslGZnd5d7pbZB2uGg&#38;q='+$scope.rest+'&zoom=15"></iframe>';
+				})
+			}
+			$scope.sendForm = function() {
+				var form = document.getElementById("addRestaurantForm")
+				var restaurant = new Object();
+				restaurant.name = form['name'].value;
+				restaurant.address = form['zip'].value+', '+form['city'].value+', '+form['street'].value+', '+form['number'].value;
+				restaurant.drive = form['drive'].value;
+				restaurant.phone = form['phone'].value;
+				console.log(JSON.stringify(restaurant));
+				$http.post('/addRestaurant',JSON.stringify(restaurant)).success(function() {
+					alert("Success!");
+				})
+			}
+		})
+	</script>
+</body>
+</html>
