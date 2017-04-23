@@ -58,7 +58,7 @@
 
 					<form id="addRestaurantForm" class="form-horizontal hidden" role="form">
 						<legend>Add new Restaurant</legend>
-
+						<input type="hidden" name="id">
 						<div class="input-group">
 							<span class="input-group-addon" id="sizing-addon1">Name</span>
 							<input type="text" class="form-control"  name="name" placeholder="Name" aria-describedby="sizing-addon1">
@@ -75,7 +75,7 @@
 						</div>
 						<div class="input-group">	
 							<span class="input-group-addon" id="sizing-addon6">Drive</span>
-							<input type="checkbox" class="form-control" name="drive" aria-describedby="sizing-addon6">
+							<input type="checkbox" class="form-control" name="drive" aria-describedby="sizing-addon6" ng-true-value="true" ng-false-value="false" ng-model="formDrive">
 						</div>
 						<div class="input-group">
 							<span class="input-group-addon" id="sizing-addon7">Phone</span>
@@ -123,13 +123,15 @@
 			$scope.sendForm = function() {
 				var form = document.getElementById("addRestaurantForm")
 				var restaurant = new Object();
+				restaurant.id = form['id'].value;
 				restaurant.name = form['name'].value;
 				restaurant.address = form['zip'].value+', '+form['city'].value+', '+form['street'].value+', '+form['number'].value;
-				restaurant.drive = form['drive'].value;
+				restaurant.drive = $scope.formDrive;
 				restaurant.phone = form['phone'].value;
 				console.log(JSON.stringify(restaurant));
 				$http.post('/addRestaurant',JSON.stringify(restaurant)).success(function() {
 					alert("Success!");
+					listRestaurants(); //itt kéne elérni hogy töltse újra a listát mikor elküldöd a formot
 				})
 			}
 		})

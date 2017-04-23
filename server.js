@@ -62,6 +62,7 @@ app.post('/addRestaurant', function(req,res) {
     }
     console.log(req.body);
     req.body.id = last + 1;
+    console.log("Reqbody id: "+req.body.id);
     console.log(JSON.stringify(restaurants));
 		restaurants.push(req.body);
 		fs.writeFile(__dirname+"/restaurants.json", JSON.stringify(restaurants), function(err) {
