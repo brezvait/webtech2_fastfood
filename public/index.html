@@ -16,10 +16,10 @@
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#">Fast Food</a>
 			<ul class="nav navbar-nav">
-				<li class="active">
+				<li class="active" id="listli">
 					<a href="#" id="list" ng-click="listRestaurants()">List</a>
 				</li>
-				<li>
+				<li id="addli">
 					<a href="#" id="add">Add</a>
 				</li>
 			</ul>
@@ -48,7 +48,7 @@
 								<td>{{restaurant.address}}</td>
 								<td><span class="glyphicon glyphicon-{{restaurant.drive ? 'ok' : 'minus'}}" aria-hidden="true"></span> </td>
 								<td>{{restaurant.phone}}</td>
-								<td style="text-align: center;"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+								<td style="text-align: center;"><a href=""><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a> <a href="" ng-click="delRestaurant(restaurant.id)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -99,10 +99,14 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
     		$("#add").click(function(){
-        	$("form").removeClass("hidden");
-    	});
+        		$("form").removeClass("hidden");
+        		$("#addli").addClass("active");
+        		$("#listli").removeClass("active");
+    		});
          	$("#list").click(function(){
-        	$("form").addClass("hidden");
+        		$("form").addClass("hidden");
+        		$("#listli").addClass("active");
+        		$("#addli").removeClass("active");
        	});
 	});
 
@@ -129,10 +133,15 @@
 				restaurant.drive = $scope.formDrive;
 				restaurant.phone = form['phone'].value;
 				console.log(JSON.stringify(restaurant));
-				$http.post('/addRestaurant',JSON.stringify(restaurant)).success(function() {
-					alert("Success!");
-					listRestaurants(); //itt kéne elérni hogy töltse újra a listát mikor elküldöd a formot
+				$http.post('/addRestaurant',JSON.stringify(restaurant)).then(function(resp) {
+					$scope.restaurants = resp.data;
 				})
+			}
+			$scope.delRestaurant = function(id) {
+				$http.delete('/delRestaurant/'+id).then(function(resp) {
+					$scope.restaurants = resp.data;
+				})
+
 			}
 		})
 	</script>
