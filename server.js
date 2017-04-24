@@ -36,17 +36,12 @@ app.get('/getRestaurants/:id', function(req,res) {
 app.post('/addRestaurant', function(req,res) {
 		var restaurants = JSON.parse(fs.readFileSync(__dirname+"/restaurants.json", "UTF8"));
     var last = 0;
-    console.log("Hossz: "+restaurants.length);
     for(var i = 0; i < restaurants.length; i++) {
       if(restaurants[i].id > last) {
         last = restaurants[i].id;
-        console.log("Forban: "+last);
       }
     }
-    console.log(req.body);
     req.body.id = last + 1;
-    console.log("Reqbody id: "+req.body.id);
-    console.log(JSON.stringify(restaurants));
 		restaurants.push(req.body);
 		fs.writeFile(__dirname+"/restaurants.json", JSON.stringify(restaurants), function(err) {
 			res.send(JSON.stringify(restaurants));
@@ -61,6 +56,15 @@ app.delete('/delRestaurant/:id', function(req,res) {
     res.send(JSON.stringify(restaurants));
   })
   
+})
+
+app.put('/modRestaurant/:id', function(req,res) {
+  var restaurants = JSON.parse(fs.readFileSync(__dirname+"/restaurants.json", "UTF8"));
+
+  //restaurantmod = restaurants.filter(function(restaurant) { return restaurant.id == req.params.id })
+  fs.writeFile(__dirname+"/restaurants.json", JSON.stringify(restaurants), function(err) {
+      res.send(JSON.stringify(restaurants));
+   })
 })
 
 var server = app.listen(8081, function () {
