@@ -149,6 +149,7 @@
 				})
 			}
 			// add gombra való nyomásnál ürüljön a form, különösen az ID! pencilre nyomáskor jelenlen meg a form
+			// readme.md-t letölteni és berakni a mappába hogy a push menjen
 			$scope.delRestaurant = function(id) {
 				$http.delete('/delRestaurant/'+id).then(function(resp) {
 					$scope.restaurants = resp.data;
