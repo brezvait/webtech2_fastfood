@@ -60,8 +60,8 @@ app.delete('/delRestaurant/:id', function(req,res) {
 
 app.put('/modRestaurant/:id', function(req,res) {
   var restaurants = JSON.parse(fs.readFileSync(__dirname+"/restaurants.json", "UTF8"));
-
-  //restaurantmod = restaurants.filter(function(restaurant) { return restaurant.id == req.params.id })
+  restaurants = restaurants.filter(function(restaurant) { return restaurant.id != req.params.id })
+  restaurants.push(req.body);
   fs.writeFile(__dirname+"/restaurants.json", JSON.stringify(restaurants), function(err) {
       res.send(JSON.stringify(restaurants));
    })
