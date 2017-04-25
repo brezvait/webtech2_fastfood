@@ -1,0 +1,46 @@
+@import "_variables.scss";
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: 0 0 $radius $radius;
+     -moz-border-radius: 0 0 $radius $radius;
+      -ms-border-radius: 0 0 $radius $radius;
+          border-radius: 0 0 $radius $radius;
+}
+body {
+	font-family: $fonts;
+}
+.navbar {
+	@include border-radius(5px);
+}
+h1 {
+	font-size: 24px;
+	color: $secondarycolor;
+}
+a {
+	text-decoration: none;
+	color: $primarycolor;
+}
+a:hover {
+	text-decoration: underline;
+	color: $secondarycolor;
+}
+.input-group-addon {
+	min-width: 100px;
+}
+.btn-primary {
+	background-color: $primarycolor;
+	border-color: $primarycolor;
+}
+.btn-primary:hover {
+	background-color: $secondarycolor;
+	border-color: $secondarycolor;
+}
+iframe {
+	border: 0;
+}
+legend {
+	float: left;
+}
+legend span {
+	float: right;
+}
