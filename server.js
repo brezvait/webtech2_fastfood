@@ -10,19 +10,6 @@ app.use(bodyParser.urlencoded( {extended: false}));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-app.get('/', function (req, res) {
-	var result = "Hello ";
-	console.log(req.query);
-   //res.send('Hello ' + req.param('name'));
-   if(req.query['name'] != undefined) {
-     result += req.query['name'];
-   }
-   else {
-     result += "World";
-   }
-   res.send(result);
- })
-
 app.get('/getRestaurants', function(req,res) {
 	fs.readFile(__dirname+"/restaurants.json", "UTF8", function(err,data) {
 		res.send(data);
